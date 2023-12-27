@@ -1,6 +1,6 @@
 
 # Simplified Transformer Blocks
-In their paper [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906), Bobby He and Thomas Hofmann @ ETH Zurich provide a simplification of the transformer block.  Their approach was used signal propagation concpets and careful experimental analysis to trim down and re-organize the block architecture.  The result is a training-parity-efficient architecture for transformers that (1) reduces the number of normalization layers, (2) parallelizes the attention and feed-forward network layers, and (3) removes skip connections.  Their approach additionally shows that the Value (V) and post-attention Projection matricies (W_O) are not necessary for stable training in the new architecture, reducing total parameter count in the block.
+In their paper [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906), Bobby He and Thomas Hofmann @ ETH Zurich provide a simplification of the transformer block.  Their approach uses signal propagation concpets and careful experimental analysis to trim down and re-organize the block architecture.  The result is a training-parity-efficient architecture for transformers that (1) reduces the number of normalization layers, (2) parallelizes the attention and feed-forward network layers, and (3) removes skip connections.  Their approach additionally shows that the Value (V) and post-attention Projection matricies (W_O) are not necessary for stable training in the new architecture, reducing total parameter count in the block.
 
 ![SAS-p](assets/SAS-P.png)
 

@@ -40,7 +40,6 @@ class CausalShapedAttention(nn.Module):
 
 
     '''
-
     def __init__(self, config):
         super().__init__()
         assert config.n_embd % config.n_head == 0
@@ -52,6 +51,7 @@ class CausalShapedAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.dropout = config.dropout
+        self.max_block_size = config.block_size
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
@@ -65,9 +65,11 @@ class CausalShapedAttention(nn.Module):
 
 
         # Manually create buffers for attention components
-        self.register_buffer("M", torch.triu(torch.ones(config.block_size, config.block_size), diagonal=1))
-        self.MC = F.softmax(1e20*self.M, dim=-1)
+        self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1))
+        #self.MC = F.softmax(1e20*self.M, dim=-1)
 
+        # TODO:  self.M and self.bias serve the same purpose, but I switched implementations
+        #        midstream.  Need to fix the "masked fill"
         # Manually create buffers for attention components
         self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
                                         .view(1, 1, config.block_size, config.block_size))
@@ -76,31 +78,31 @@ class CausalShapedAttention(nn.Module):
         alpha = self.alpha
         beta = self.beta
         gamma = self.gamma
-    
+
         B, T, C = x.size()
-    
+
+        assert T < self.max_block_size
+
         pdb.set_trace()  # Add a breakpoint here to start debugging
 
         q, k  = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
         q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
         v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
-    
+
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
         att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
-    
+
         Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
-        MC = self.MC.view(1,1,T,T).expand(B, self.n_head, T, T)
-        #Id = torch.eye(T).unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T, T)
-        #MC = self.MC.unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T, T)
+        M = self.M[:T,:T].view(1,1,T,T).expand(B, self.n_head, T, T)
         att = beta * F.softmax(att, dim=-1)
-        att = att + alpha * Id  - gamma * MC
-    
-    
+        att = att + alpha * Id  - gamma * M
+
+
         att = self.attn_dropout(att)
         y = att @ v
         y = y.transpose(1, 2).contiguous().view(B, T, C)
-    
+
         # NOTE:  There is no skip connection, so this is the output of the
         # Shaped Attention applied to the input.
 

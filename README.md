@@ -4,7 +4,7 @@ In their paper [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906
 
 ![SAS-p](assets/SAS-P.png)
 
-Shaped Attention is developed and detailed by the same group, [Noci, et. all, The Shaped Transformer: Attention Models in the Infinite Depth-and-Width Limit](https://arxiv.org/abs/2306.17759)
+Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. Oxford in [Noci, Li, Li, He, Hoffman, Madison, and Roy; The Shaped Transformer: Attention Models in the Infinite Depth-and-Width Limit](https://arxiv.org/abs/2306.17759)
 
 # nanoGPT
 

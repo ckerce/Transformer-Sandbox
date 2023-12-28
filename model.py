@@ -48,7 +48,7 @@ class CausalShapedAttention(nn.Module):
         self.dropout = config.dropout
         custom_variable_initialization()
 
-    def custom_variable_initialization()
+    def custom_variable_initialization():
         self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.float)) 
         self.beta = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.float))

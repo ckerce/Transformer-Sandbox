@@ -67,7 +67,6 @@ class CausalShapedAttention(nn.Module):
     
 
     '''
-
     def __init__(self, config):
         super().__init__()
         assert config.n_embd % config.n_head == 0
@@ -79,21 +78,21 @@ class CausalShapedAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.dropout = config.dropout
-        custom_variable_initialization()
+        self.custom_variable_initialization()
 
-    def custom_variable_initialization():
-        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.float)) 
+    def custom_variable_initialization(self):
+        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         self.beta = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         # Initialize W_K to zero.
-        W_QK = self.c_attn.weight
-        W_QK[:, config.n_embed:] = 0
+        W_QK = self.c_attn.weight.detach()
+        W_QK[self.n_embd:, :] = 0
         self.c_attn.weight = torch.nn.Parameter( W_QK )
-        
+
 
         # Manually create buffers for attention components
         self.register_buffer("M", torch.triu(torch.ones(config.block_size, config.block_size), diagonal=1))
-        self.MC = F.softmax(self.M, dim=-1)
+        self.MC = F.softmax(1e20*self.M, dim=-1)
 
         # Manually create buffers for attention components
         self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
@@ -104,32 +103,29 @@ class CausalShapedAttention(nn.Module):
         beta = self.beta
         gamma = self.gamma
 
-        B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
+        B, T, C = x.size()
 
-        # calculate query, key, values for all heads in batch and move head forward to be the batch dim
+        pdb.set_trace()  # Add a breakpoint here to start debugging
+
         q, k  = self.c_attn(x).split(self.n_embd, dim=2)
-        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
-        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
-        # Shaped Attention does not need the linear weight
-        v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
 
-        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
-        # Expect this to be slower than optimized flash attention
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
         att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
 
-        # probably the right dimensionality is given by
-        # MC -> MC.unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T, T)
-        # Id = torch.eye(T).unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T,T)
-        Id = torch.eye(T).unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T,T)
-        MC = self.MC.unsqueeze(0).unsqueeze(1).expand(B, self.n_head, T, T)
-        att = beta * F.softmax(att, dim=-1) # softmax along the row dimension of the TxT
-        att = attn + alpha * Id  - gamma * MC  # GET DIMENSIONS RIGHT FOR THIS
+        Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
+        MC = self.MC.view(1,1,T,T).expand(B, self.n_head, T, T)
+        att = beta * F.softmax(att, dim=-1)
+        att = att + alpha * Id  - gamma * MC
+
+
         att = self.attn_dropout(att)
-        y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
-        y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
-        
-        # NOTE:  There is no skip connection, so this is the output of the 
+        y = att @ v
+        y = y.transpose(1, 2).contiguous().view(B, T, C)
+
+        # NOTE:  There is no skip connection, so this is the output of the
         # Shaped Attention applied to the input.
 
         return y

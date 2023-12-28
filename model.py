@@ -135,6 +135,40 @@ class CausalShapedAttention(nn.Module):
 
         return y
 
+class MLP(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
+        self.gelu    = nn.GELU()
+        self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
+        self.dropout = nn.Dropout(config.dropout)
+
+    def forward(self, x):
+        x = self.c_fc(x)
+        x = self.gelu(x)
+        x = self.c_proj(x)
+        x = self.dropout(x)
+        return x
+
+class SimplifiedTransformerBlock(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
+        self.attn = CausalShapedAttention(config)
+        self.mlp = MLP(config)
+        self.beta_SA = nn.Parameter(torch.tensor(0.5, dtype=torch.float))
+        self.beta_FF = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
+
+        def initialize_parameters():
+            self.beta_SA = 0.5
+            self.beta_FF = 1.0 
+
+    def forward(self, x):
+        x = self.beta_SA * self.attn(self.ln_1(x)) + self.beta_FF * self.mlp(self.ln_2(x))
+        return x
+
 
 ###############################################################################
 #
@@ -191,21 +225,6 @@ class CausalSelfAttention(nn.Module):
         y = self.resid_dropout(self.c_proj(y))
         return y
 
-class MLP(nn.Module):
-
-    def __init__(self, config):
-        super().__init__()
-        self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
-        self.gelu    = nn.GELU()
-        self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
-        self.dropout = nn.Dropout(config.dropout)
-
-    def forward(self, x):
-        x = self.c_fc(x)
-        x = self.gelu(x)
-        x = self.c_proj(x)
-        x = self.dropout(x)
-        return x
 
 class Block(nn.Module):
 

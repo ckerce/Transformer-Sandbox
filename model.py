@@ -30,42 +30,40 @@ class LayerNorm(nn.Module):
 ###############################################################################
 #
 #
+#    Pseudocode with bad dimensionality:
+#    
+#    self.W_Q = nn.Linear(self.head_dim, self.head_dim, bias=False)
+#    nn.init.zeros_(self.W_Q.weight)
+#    self.W_K = nn.Linear(self.head_dim, self.head_dim, bias=False)
+#        
+#    def forward(self, X):
+#        seq_len = X.size(1)  # Assuming X is of shape [batch, seq_len, token_embd_dim]
+#        M_tmp = self.M[:seq_len, :seq_len]
+#        C_tmp = self.C[:seq_len, :seq_len]
+#        # Split X into self.heads chunks along the token_embd_dim dimension
+#        X_chunks = torch.chunk(X, self.heads, dim=2)
+#
+#        # Process each chunk and store the results
+#        processed_chunks = []
+#        for X_h in X_chunks:
+#            Q_h = self.W_Q(X_h)
+#            K_h = self.W_K(X_h)
+#            QKT = torch.bmm(Q_h, K_h.transpose(2,1)) / self.scale
+#            A_h = nn.functional.softmax( QKT, dim=-1) + M_tmp
+#            Id = torch.eye( X_h.size(1) )
+#            modified_X_h = self.alpha * X_h + (self.beta * A_h - self.gamma * C_tmp) * X_h
+#            processed_chunks.append(modified_X_h)
+#
+#        # Concatenate the processed chunks back together
+#        X_out = torch.cat(processed_chunks, dim=2)
+#        return X_out
+#    
 #
 ###############################################################################
 
 class CausalShapedAttention(nn.Module):
     '''
     nano-GPT style code to implement causal shaped attention and apply it to an input.
-
-    Pseudocode with bad dimensionality:
-    
-    self.W_Q = nn.Linear(self.head_dim, self.head_dim, bias=False)
-    nn.init.zeros_(self.W_Q.weight)
-    self.W_K = nn.Linear(self.head_dim, self.head_dim, bias=False)
-        
-    def forward(self, X):
-        seq_len = X.size(1)  # Assuming X is of shape [batch, seq_len, token_embd_dim]
-        M_tmp = self.M[:seq_len, :seq_len]
-        C_tmp = self.C[:seq_len, :seq_len]
-        # Split X into self.heads chunks along the token_embd_dim dimension
-        X_chunks = torch.chunk(X, self.heads, dim=2)
-
-        # Process each chunk and store the results
-        processed_chunks = []
-        for X_h in X_chunks:
-            Q_h = self.W_Q(X_h)
-            K_h = self.W_K(X_h)
-            QKT = torch.bmm(Q_h, K_h.transpose(2,1)) / self.scale
-            A_h = nn.functional.softmax( QKT, dim=-1) + M_tmp
-            Id = torch.eye( X_h.size(1) )
-            modified_X_h = self.alpha * X_h + (self.beta * A_h - self.gamma * C_tmp) * X_h
-            processed_chunks.append(modified_X_h)
-
-        # Concatenate the processed chunks back together
-        X_out = torch.cat(processed_chunks, dim=2)
-        return X_out
-    
-
     '''
     def __init__(self, config):
         super().__init__()
@@ -74,7 +72,6 @@ class CausalShapedAttention(nn.Module):
         self.c_attn = nn.Linear(config.n_embd, 2 * config.n_embd, bias=config.bias)
         # regularization
         self.attn_dropout = nn.Dropout(config.dropout)
-        #self.resid_dropout = nn.Dropout(config.dropout)
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.dropout = config.dropout

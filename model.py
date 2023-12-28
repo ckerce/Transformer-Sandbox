@@ -85,6 +85,7 @@ class CausalShapedAttention(nn.Module):
         self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         self.beta = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
         self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
+
         # Initialize W_K to zero.
         W_QK = self.c_attn.weight.detach()
         W_QK[self.n_embd:, :] = 0
@@ -93,7 +94,6 @@ class CausalShapedAttention(nn.Module):
 
         # Manually create buffers for attention components
         self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1))
-        #self.MC = F.softmax(1e20*self.M, dim=-1)
 
         # TODO:  self.M and self.bias serve the same purpose, but I switched implementations
         #        midstream.  Need to fix the "masked fill"
@@ -109,8 +109,6 @@ class CausalShapedAttention(nn.Module):
         B, T, C = x.size()
 
         assert T < self.max_block_size
-
-        #pdb.set_trace()  # Add a breakpoint here to start debugging
 
         q, k  = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
@@ -129,9 +127,6 @@ class CausalShapedAttention(nn.Module):
         att = self.attn_dropout(att)
         y = att @ v
         y = y.transpose(1, 2).contiguous().view(B, T, C)
-
-        # NOTE:  There is no skip connection, so this is the output of the
-        # Shaped Attention applied to the input.
 
         return y
 
@@ -164,12 +159,12 @@ class SimplifiedTransformerBlock(nn.Module):
         def initialize_parameters():
             # The simplified transformer architecture has some requirements on 
             # initialization values that are critical to the architecture.
-            #  beta_SA < beta FF = 1.0
+            #  (1) beta_SA < beta FF = 1.0
             #
-            #  The W_K part of attn.c_attn.weight = 0
-            #  attn.alpha = 1.0
-            #  attn.beta = attn.gamma, so that the initial attn matrix is the identity
-            #  attn.beta = attn.gamma = 1.0 is acceptable
+            #  (2) The W_K part of attn.c_attn.weight = 0
+            #  (3) attn.alpha = 1.0
+            #  (4) attn.beta = attn.gamma, so that the initial attn matrix is the identity
+            #      attn.beta = attn.gamma = 1.0 is acceptable
             self.beta_SA = 0.5
             self.beta_FF = 1.0 
             self.attn.custom_variable_initialization()

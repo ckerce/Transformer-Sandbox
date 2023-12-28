@@ -92,11 +92,8 @@ class CausalShapedAttention(nn.Module):
         # Manually create buffers for attention components
         self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1))
 
-        # TODO:  self.M and self.bias serve the same purpose, but I switched implementations
-        #        midstream.  Need to fix the "masked fill"
-        # Manually create buffers for attention components
-        self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
-                                        .view(1, 1, config.block_size, config.block_size))
+        #self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
+        #                                .view(1, 1, config.block_size, config.block_size))
 
     def forward(self, x):
         alpha = self.alpha
@@ -113,7 +110,8 @@ class CausalShapedAttention(nn.Module):
         v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
 
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
-        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
+        #att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
+        att = att.masked_fill(self.M[:T,:T].view(1,1,T,T) == 0, float('-1e20'))
 
         Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
         M = self.M[:T,:T].view(1,1,T,T).expand(B, self.n_head, T, T)

@@ -162,8 +162,17 @@ class SimplifiedTransformerBlock(nn.Module):
         self.beta_FF = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
 
         def initialize_parameters():
+            # The simplified transformer architecture has some requirements on 
+            # initialization values that are critical to the architecture.
+            #  beta_SA < beta FF = 1.0
+            #
+            #  The W_K part of attn.c_attn.weight = 0
+            #  attn.alpha = 1.0
+            #  attn.beta = attn.gamma, so that the initial attn matrix is the identity
+            #  attn.beta = attn.gamma = 1.0 is acceptable
             self.beta_SA = 0.5
             self.beta_FF = 1.0 
+            self.attn.custom_variable_initialization()
 
     def forward(self, x):
         x = self.beta_SA * self.attn(self.ln_1(x)) + self.beta_FF * self.mlp(self.ln_2(x))

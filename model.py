@@ -175,7 +175,8 @@ class SimplifiedTransformerBlock(nn.Module):
             self.attn.custom_variable_initialization()
 
     def forward(self, x):
-        x = self.beta_SA * self.attn(self.ln_1(x)) + self.beta_FF * self.mlp(self.ln_2(x))
+        x = self.ln_1(x)
+        x = self.beta_SA * self.attn(x) + self.beta_FF * self.mlp(x)
         return x
 
 

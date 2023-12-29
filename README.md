@@ -6,6 +6,24 @@ In their paper [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906
 
 Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. Oxford in [Noci, Li, Li, He, Hoffman, Madison, and Roy; The Shaped Transformer: Attention Models in the Infinite Depth-and-Width Limit](https://arxiv.org/abs/2306.17759)
 
+
+Output from the nanoGPT "Shakespear Char" example:
+
+> TARIZEL:
+> Mearcien; Just a jrwenty, g b forgRET:
+> Hold i knimun'st pp h jrwddvvkes!
+> 3 KING HENRY nXENES:
+> Nurselly ruke!
+> 3 KING HENRY VI:
+> 3 KING HENRY VI:
+> Zoud's you commen! WhXOND:
+> Zeed-must $ Zall, $ $ Zall's $ Zames? Zaily!
+> 3 KING HENRY VI:
+> Zainst Zee to any was and my hath faloum patify,
+> That and for foul seathers thou he worthy heart to be for and let cannot all you soul,
+> For I hall my left my keep, your have and me than that death,
+> And make that that as in thou izer his lands to senters patch
+
 # nanoGPT
 
 nanoGPT (https://github.com/karpathy/nanoGPT) is a simple and fast repository for training/finetuning medium-sized GPTs. It is a rewrite of [minGPT](https://github.com/karpathy/minGPT) that prioritizes teeth over education. Still under active development, but currently the file `train.py` reproduces GPT-2 (124M) on OpenWebText, running on a single 8XA100 40GB node in about 4 days of training. The code itself is plain and readable: `train.py` is a ~300-line boilerplate training loop and `model.py` a ~300-line GPT model definition, which can optionally load the GPT-2 weights from OpenAI. That's it.

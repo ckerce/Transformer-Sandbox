@@ -114,11 +114,8 @@ class CausalShapedAttention(nn.Module):
         v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
 
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
-        #att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
-        att = att.masked_fill(self.M[:T,:T].view(1,1,T,T) == 0, float('-1e20'))
+        att = att.masked_fill(self.M[:,:,:T,:T] == 0, float('-1e20'))
 
-        #Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
-        #M = self.M[:T,:T].view(1,1,T,T).expand(B, self.n_head, T, T)
         Id = self.Id[:,:,:T,:T].expand(B,self.n_head,T,T)
         M  =  self.M[:,:,:T,:T].expand(B,self.n_head,T,T)
         #pdb.set_trace() # BREAKPOINT

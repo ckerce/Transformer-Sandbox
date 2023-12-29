@@ -9,20 +9,20 @@ Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. 
 
 Output from the nanoGPT "Shakespear Char" example:
 
-> TARIZEL:
-> Mearcien; Just a jrwenty, g b forgRET:
-> Hold i knimun'st pp h jrwddvvkes!
-> 3 KING HENRY nXENES:
-> Nurselly ruke!
-> 3 KING HENRY VI:
-> 3 KING HENRY VI:
-> Zoud's you commen! WhXOND:
-> Zeed-must $ Zall, $ $ Zall's $ Zames? Zaily!
-> 3 KING HENRY VI:
-> Zainst Zee to any was and my hath faloum patify,
-> That and for foul seathers thou he worthy heart to be for and let cannot all you soul,
-> For I hall my left my keep, your have and me than that death,
-> And make that that as in thou izer his lands to senters patch
+> TARIZEL:  
+> Mearcien; Just a jrwenty, g b forgRET:  
+> Hold i knimun'st pp h jrwddvvkes!  
+> 3 KING HENRY nXENES:  
+> Nurselly ruke!  
+> 3 KING HENRY VI:  
+> 3 KING HENRY VI:  
+> Zoud's you commen! WhXOND:  
+> Zeed-must $ Zall, $ $ Zall's $ Zames? Zaily!  
+> 3 KING HENRY VI:  
+> Zainst Zee to any was and my hath faloum patify,  
+> That and for foul seathers thou he worthy heart to be for and let cannot all you soul,  
+> For I hall my left my keep, your have and me than that death,  
+> And make that that as in thou izer his lands to senters patch  
 
 # nanoGPT
 

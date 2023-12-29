@@ -15,6 +15,8 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+import pdb
+
 class LayerNorm(nn.Module):
     """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
 
@@ -79,9 +81,9 @@ class CausalShapedAttention(nn.Module):
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
-        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
-        self.beta = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
-        self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
+        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor( 1.0, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
 
         # Initialize W_K to zero.
         W_QK = self.c_attn.weight.detach()
@@ -90,7 +92,8 @@ class CausalShapedAttention(nn.Module):
 
 
         # Manually create buffers for attention components
-        self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1))
+        self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+        self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
 
         #self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
         #                                .view(1, 1, config.block_size, config.block_size))
@@ -102,7 +105,8 @@ class CausalShapedAttention(nn.Module):
 
         B, T, C = x.size()
 
-        assert T < self.max_block_size
+        assert T <= self.max_block_size
+
 
         q, k  = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
@@ -113,8 +117,11 @@ class CausalShapedAttention(nn.Module):
         #att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-1e20'))
         att = att.masked_fill(self.M[:T,:T].view(1,1,T,T) == 0, float('-1e20'))
 
-        Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
-        M = self.M[:T,:T].view(1,1,T,T).expand(B, self.n_head, T, T)
+        #Id = torch.eye(T).view(1,1,T,T).expand(B,self.n_head,T,T)
+        #M = self.M[:T,:T].view(1,1,T,T).expand(B, self.n_head, T, T)
+        Id = self.Id[:,:,:T,:T].expand(B,self.n_head,T,T)
+        M  =  self.M[:,:,:T,:T].expand(B,self.n_head,T,T)
+        #pdb.set_trace() # BREAKPOINT
         att = beta * F.softmax(att, dim=-1)
         att = att + alpha * Id  - gamma * M
 
@@ -262,7 +269,7 @@ class GPT(nn.Module):
             wte = nn.Embedding(config.vocab_size, config.n_embd),
             wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
-            h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
+            h = nn.ModuleList([SimplifiedTransformerBlock(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)

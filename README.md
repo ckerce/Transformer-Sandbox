@@ -56,9 +56,6 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
 
 ![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
 
-```
-
-```
 
 # nanoGPT
 

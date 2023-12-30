@@ -23,6 +23,24 @@ One output from the CausalSimplifiedTransformer class on the "Shakespear Char" e
 > That and for foul seathers thou he worthy heart to be for and let cannot all you soul,  
 > For I hall my left my keep, your have and me than that death,  
 > And make that that as in thou izer his lands to senters patch  
+>  
+> ####################################################################################  
+>  
+> Brother Clanues Edward's by joyfulty;  
+> For which werence country: and for heard;  
+> And for thesen our cannot from me home with man's land,  
+> And for thereof York. Warwick, how be grief,  
+> And, and, and you strown in the hands.  
+>   
+> QUEEN ELIZABETH:  
+> The words hand you the far of your make,  
+> And your confe honour day for his minds,  
+> And you for and be no son, and you, And you many did,  
+> And your his gardmn crown some, and wear your did eas,  
+> And you fathed you mother, as you well.  
+>   
+> ARTHARALEAR:  
+> Ay, you found you  
 
 # nanoGPT
 

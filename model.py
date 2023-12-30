@@ -78,16 +78,16 @@ class CausalShapedAttention(nn.Module):
         self.n_embd = config.n_embd
         self.dropout = config.dropout
         self.max_block_size = config.block_size
-        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
-        self.beta = nn.Parameter(torch.tensor( 1.0, dtype=torch.bfloat16))
-        self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.alpha = nn.Parameter(torch.tensor(0.5, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor( 0.01, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
         with torch.no_grad():
-            self.alpha.fill_(1.0)
-            self.beta.fill_(1.0)
-            self.gamma.fill_(1.0)        
+            self.alpha.fill_(0.5)
+            self.beta.fill_(0.01)
+            self.gamma.fill_(0.01)        
             # Initialize W_K to zero.
             self.c_attn.weight[self.n_embd:, :].fill_(0.0)
 
@@ -147,7 +147,7 @@ class SimplifiedTransformerBlock(nn.Module):
         self.attn = CausalShapedAttention(config)
         self.mlp = MLP(config)
         self.beta_SA = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
-        self.beta_FF = nn.Parameter(torch.tensor(0.5, dtype=torch.bfloat16))
+        self.beta_FF = nn.Parameter(torch.tensor(0.25, dtype=torch.bfloat16))
         self.initialize_parameters()
 
     def initialize_parameters(self):
@@ -162,7 +162,7 @@ class SimplifiedTransformerBlock(nn.Module):
         self.attn.custom_variable_initialization()
         with torch.no_grad():
             self.beta_SA.fill_(1.0)
-            self.beta_FF.fill_(0.5)
+            self.beta_FF.fill_(0.25)
 
     def forward(self, x):
         x = self.ln_1(x)

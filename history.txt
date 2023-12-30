@@ -1,0 +1,260 @@
+
+###############################################################################
+#
+#  Changing the strenght and relative weights of alpha to beta and gamma
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.4
+#     beta_SA = 1.0
+#     beta_FF = 0.5
+#
+#  Results -- better "feel" to the output
+#
+###############################################################################
+
+In [2]: for h in model.transformer.h:
+   ...:     print( h.beta_SA)
+   ...:     print( h.beta_FF)
+   ...:     print( h.attn.alpha )
+   ...:     print( h.attn.beta  )
+   ...:     print( h.attn.gamma )
+   ...:     print('------------')
+   ...:
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.2500, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.0160, dtype=torch.bfloat16, requires_grad=True)
+------------
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.0786, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.1211, dtype=torch.bfloat16, requires_grad=True)
+------------
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.2578, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(-0.1328, dtype=torch.bfloat16, requires_grad=True)
+------------
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.2988, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.0625, dtype=torch.bfloat16, requires_grad=True)
+------------
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.2930, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.0820, dtype=torch.bfloat16, requires_grad=True)
+------------
+Parameter containing:
+tensor(1., dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.5000, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.1279, dtype=torch.bfloat16, requires_grad=True)
+Parameter containing:
+tensor(0.2500, dtype=torch.bfloat16, requires_grad=True)
+------------
+
+###############################################################################
+#
+#  Strength and relative weights of alpha to beta and gamma
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.2
+#     beta_SA = 1.0
+#     beta_FF = 0.01
+#
+#  Results -- very bad
+#
+###############################################################################
+In [8]: for h in model.transformer.h:
+   ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
+   ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
+   ...:     print( 'alpha   = ', float(h.attn.alpha.detach()))
+   ...:     print( 'beta    = ', float(h.attn.beta.detach()))
+   ...:     print( 'gamma   = ', float(h.attn.gamma.detach()) )
+   ...:     print('------------')
+   ...:
+beta_SA =  1.0
+beta_FF =  0.032958984375
+alpha   =  0.498046875
+beta    =  0.2333984375
+gamma   =  0.0693359375
+------------
+beta_SA =  1.0
+beta_FF =  0.0712890625
+alpha   =  0.5
+beta    =  0.038330078125
+gamma   =  0.1865234375
+------------
+beta_SA =  1.0
+beta_FF =  0.047119140625
+alpha   =  0.494140625
+beta    =  -0.031982421875
+gamma   =  0.04736328125
+------------
+beta_SA =  1.0
+beta_FF =  0.041259765625
+alpha   =  0.494140625
+beta    =  0.0247802734375
+gamma   =  0.03125
+------------
+beta_SA =  1.0
+beta_FF =  0.056396484375
+alpha   =  0.494140625
+beta    =  -0.0235595703125
+gamma   =  0.03125
+------------
+beta_SA =  1.0
+beta_FF =  0.11181640625
+alpha   =  0.494140625
+beta    =  -0.09765625
+gamma   =  0.125
+
+###############################################################################
+#
+#  Strength and relative weights of alpha to beta and gamma
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.2
+#     beta_SA = 1.0
+#     beta_FF = 0.25
+#
+#  Results -- very bad
+#
+###############################################################################
+In [2]: for h in model.transformer.h:
+   ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
+   ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
+   ...:     print( 'alpha   = ', float(h.attn.alpha.detach()))
+   ...:     print( 'beta    = ', float(h.attn.beta.detach()))
+   ...:     print( 'gamma   = ', float(h.attn.gamma.detach()) )
+   ...:     print('------------')
+   ...:
+beta_SA =  1.0
+beta_FF =  0.2265625
+alpha   =  0.5
+beta    =  0.25
+gamma   =  0.0625
+------------
+beta_SA =  1.0
+beta_FF =  0.2470703125
+alpha   =  0.5
+beta    =  0.080078125
+gamma   =  0.125
+------------
+beta_SA =  1.0
+beta_FF =  0.2490234375
+alpha   =  0.5
+beta    =  0.03369140625
+gamma   =  0.125
+------------
+beta_SA =  1.0
+beta_FF =  0.25
+alpha   =  0.5
+beta    =  0.0225830078125
+gamma   =  0.125
+------------
+beta_SA =  1.0
+beta_FF =  0.2490234375
+alpha   =  0.5
+beta    =  0.1728515625
+gamma   =  -0.0625
+------------
+beta_SA =  1.0
+beta_FF =  0.2470703125
+alpha   =  0.5
+beta    =  -0.125
+gamma   =  0.25
+------------
+
+###############################################################################
+#
+#  Strength and relative weights of alpha to beta and gamma
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.4
+#     beta_SA = 1.0
+#     beta_FF = 0.25
+#
+#  Results -- Reasonably good.  It looks like dropout regularization is the trick. 
+#
+###############################################################################
+In [2]: for h in model.transformer.h:
+   ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
+   ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
+   ...:     print( 'alpha   = ', float(h.attn.alpha.detach()))
+   ...:     print( 'beta    = ', float(h.attn.beta.detach()))
+   ...:     print( 'gamma   = ', float(h.attn.gamma.detach()) )
+   ...:     print('------------')
+   ...:
+beta_SA =  1.0
+beta_FF =  0.189453125
+alpha   =  0.5
+beta    =  0.265625
+gamma   =  0.0751953125
+------------
+beta_SA =  1.0
+beta_FF =  0.25
+alpha   =  0.5
+beta    =  0.032958984375
+gamma   =  0.1298828125
+------------
+beta_SA =  1.0
+beta_FF =  0.2490234375
+alpha   =  0.5
+beta    =  0.25
+gamma   =  0.0625
+------------
+beta_SA =  1.0
+beta_FF =  0.2470703125
+alpha   =  0.5
+beta    =  0.314453125
+gamma   =  -0.25
+------------
+beta_SA =  1.0
+beta_FF =  0.244140625
+alpha   =  0.5
+beta    =  0.345703125
+gamma   =  -0.06298828125
+------------
+beta_SA =  1.0
+beta_FF =  0.236328125
+alpha   =  0.5
+beta    =  0.025146484375
+gamma   =  0.26953125
+------------
+###############################################################################
+#
+#  Chaning the strength of beta_FF << beta_SA, making the initial model
+#     almost completely attention dominated.
+#
+###############################################################################

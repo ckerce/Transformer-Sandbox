@@ -54,7 +54,7 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
 
 # Shaped Attention Algorithm
 
-![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
+![SAS-P Algorithm](assets/ShapedAttention.png)
 
 
 # nanoGPT

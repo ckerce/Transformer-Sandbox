@@ -167,6 +167,13 @@ class SimplifiedTransformerBlock(nn.Module):
     def forward(self, x):
         x = self.ln_1(x)
         x = self.beta_SA * self.attn(x) + self.beta_FF * self.mlp(x)
+        # Because the result is normalized, the beta_SA and beta_FF only
+        # have one effective parameter between them, as can be verified 
+        # by using the following line instead of the one above:
+        #
+        #      x = (1 - self.beta_FF) * self.attn(x) + self.beta_FF * self.mlp(x)
+        #
+        # The same logic applies to alpha in the Shaped Attention class.
         return x
 
 

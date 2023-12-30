@@ -9,7 +9,7 @@
 #
 #  Results -- better "feel" to the output
 #
-###############################################################################
+#-----------------------------------------------------------------------------#
 
 In [2]: for h in model.transformer.h:
    ...:     print( h.beta_SA)
@@ -96,7 +96,7 @@ tensor(0.2500, dtype=torch.bfloat16, requires_grad=True)
 #
 #  Results -- very bad
 #
-###############################################################################
+#------------------------------------------------------------------------------#
 In [8]: for h in model.transformer.h:
    ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
    ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
@@ -151,7 +151,7 @@ gamma   =  0.125
 #
 #  Results -- very bad
 #
-###############################################################################
+#-----------------------------------------------------------------------------#
 In [2]: for h in model.transformer.h:
    ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
    ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
@@ -207,7 +207,7 @@ gamma   =  0.25
 #
 #  Results -- Reasonably good.  It looks like dropout regularization is the trick. 
 #
-###############################################################################
+#-----------------------------------------------------------------------------#
 In [2]: for h in model.transformer.h:
    ...:     print( 'beta_SA = ', float(h.beta_SA.detach()))
    ...:     print( 'beta_FF = ', float(h.beta_FF.detach()))
@@ -252,9 +252,84 @@ alpha   =  0.5
 beta    =  0.025146484375
 gamma   =  0.26953125
 ------------
-###############################################################################
+
+#############################################################################################
 #
-#  Chaning the strength of beta_FF << beta_SA, making the initial model
-#     almost completely attention dominated.
+#  Make some better parameter reports
 #
-###############################################################################
+#############################################################################################
+def clip(x, width=5, decimal_places=2):
+    # Convert the float to a string with the specified number of decimal places
+    formatted_str = f"{x:.{decimal_places}f}"
+
+    # If the formatted string is shorter than the specified width, pad it with spaces
+    if len(formatted_str) < width:
+        formatted_str = formatted_str[:width]  # Truncate or pad with spaces
+
+    return formatted_str
+
+def print_model_params( model ):
+   for h in model.transformer.h:
+       print( 'beta_SA = ' , clip(h.beta_SA.detach()) , 
+        ', ', 'beta_FF = ' , clip(h.beta_FF.detach()) , 
+        ', ', 'alpha   = ' , clip(h.attn.alpha.detach()) , 
+        ', ', 'beta    = ' , clip(h.attn.beta.detach()) , 
+        ', ', 'gamma   = ' , clip(h.attn.gamma.detach()) ) 
+
+print_model_params( model )
+
+#############################################################################################
+#
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.4
+#     beta_SA = 1.0
+#     beta_FF = 1.25
+#
+#  Results -- Abysmal.  THis is a really bad combination of attention and FFN.  
+#
+#-------------------------------------------------------------------------------------------#
+
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.25 ,  gamma   =  -0.14
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.27 ,  gamma   =  -0.25
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.48 ,  gamma   =  0.12
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.50 ,  gamma   =  0.12
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.45 ,  gamma   =  -0.12
+beta_SA =  1.00 ,  beta_FF =  1.25 ,  alpha   =  0.50 ,  beta    =  0.08 ,  gamma   =  0.25
+
+#############################################################################################
+#
+#     Changed the coupling strength of beta_SA
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.5
+#     beta_SA = 1.0
+#     beta_FF = 0.25
+#
+#  Results --  fairly good. 
+#
+#-------------------------------------------------------------------------------------------#
+
+beta_SA =  1.00 ,  beta_FF =  0.15 ,  alpha   =  0.50 ,  beta    =  0.27 ,  gamma   =  0.08
+beta_SA =  1.00 ,  beta_FF =  0.25 ,  alpha   =  0.50 ,  beta    =  0.02 ,  gamma   =  0.17
+beta_SA =  1.00 ,  beta_FF =  0.25 ,  alpha   =  0.50 ,  beta    =  0.25 ,  gamma   =  0.08
+beta_SA =  1.00 ,  beta_FF =  0.25 ,  alpha   =  0.50 ,  beta    =  0.25 ,  gamma   =  -0.09
+beta_SA =  1.00 ,  beta_FF =  0.25 ,  alpha   =  0.50 ,  beta    =  0.26 ,  gamma   =  -0.14
+beta_SA =  1.00 ,  beta_FF =  0.22 ,  alpha   =  0.50 ,  beta    =  0.01 ,  gamma   =  0.27
+
+#############################################################################################
+#
+#     Changed the coupling strength of beta_SA
+#     Initially alpha = 0.5, beta = gamma = 0.01
+#     dropout = 0.5
+#     beta_SA = 1.0
+#     beta_FF = 0.25
+#
+#  Results --  Good with temperature > 1.0 
+#
+#-------------------------------------------------------------------------------------------#
+
+beta_SA =  1.00 ,  beta_FF =  0.23 ,  alpha   =  0.50 ,  beta    =  0.25 ,  gamma   =  0.06
+beta_SA =  1.00 ,  beta_FF =  0.25 ,  alpha   =  0.50 ,  beta    =  0.04 ,  gamma   =  0.13
+beta_SA =  1.00 ,  beta_FF =  0.24 ,  alpha   =  0.50 ,  beta    =  0.25 ,  gamma   =  -0.13
+beta_SA =  1.00 ,  beta_FF =  0.24 ,  alpha   =  0.50 ,  beta    =  0.30 ,  gamma   =  0.13
+beta_SA =  1.00 ,  beta_FF =  0.19 ,  alpha   =  0.50 ,  beta    =  0.31 ,  gamma   =  0.02
+beta_SA =  1.00 ,  beta_FF =  0.23 ,  alpha   =  0.50 ,  beta    =  0.04 ,  gamma   =  0.26

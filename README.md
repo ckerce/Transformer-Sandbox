@@ -7,7 +7,7 @@ In their paper [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906
 Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. Oxford in [Noci, Li, Li, He, Hoffman, Madison, and Roy; The Shaped Transformer: Attention Models in the Infinite Depth-and-Width Limit](https://arxiv.org/abs/2306.17759)
 
 
-Output from the nanoGPT "Shakespear Char" example:
+One output from the CausalSimplifiedTransformer class on the "Shakespear Char" example is given below.  It does not currently work nearly as well as the GPT-2 architecture already implemented in nanoGPT.
 
 > TARIZEL:  
 > Mearcien; Just a jrwenty, g b forgRET:  

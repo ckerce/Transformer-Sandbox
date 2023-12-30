@@ -78,17 +78,22 @@ class CausalShapedAttention(nn.Module):
         self.n_embd = config.n_embd
         self.dropout = config.dropout
         self.max_block_size = config.block_size
-        self.custom_variable_initialization()
-
-    def custom_variable_initialization(self):
         self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
         self.beta = nn.Parameter(torch.tensor( 1.0, dtype=torch.bfloat16))
         self.gamma = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.custom_variable_initialization()
+
+    def custom_variable_initialization(self):
+        with torch.no_grad():
+            self.alpha.fill_(1.0)
+            self.beta.fill_(1.0)
+            self.gamma.fill_(1.0)        
+            self.c_attn.weight[self.n_embd:, :].fill_(0.0)
 
         # Initialize W_K to zero.
-        W_QK = self.c_attn.weight.detach()
-        W_QK[self.n_embd:, :] = 0
-        self.c_attn.weight = torch.nn.Parameter( W_QK )
+        #W_QK = self.c_attn.weight.detach()
+        #W_QK[self.n_embd:, :] = 0
+        #self.c_attn.weight = torch.nn.Parameter( W_QK )
 
 
         # Manually create buffers for attention components
@@ -152,21 +157,23 @@ class SimplifiedTransformerBlock(nn.Module):
         self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
         self.attn = CausalShapedAttention(config)
         self.mlp = MLP(config)
-        self.beta_SA = nn.Parameter(torch.tensor(0.5, dtype=torch.float))
-        self.beta_FF = nn.Parameter(torch.tensor(1.0, dtype=torch.float))
+        self.beta_SA = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.beta_FF = nn.Parameter(torch.tensor(0.5, dtype=torch.bfloat16))
+        self.initialize_parameters()
 
-        def initialize_parameters():
-            # The simplified transformer architecture has some requirements on 
-            # initialization values that are critical to the architecture.
-            #  (1) beta_SA < beta FF = 1.0
-            #
-            #  (2) The W_K part of attn.c_attn.weight = 0
-            #  (3) attn.alpha = 1.0
-            #  (4) attn.beta = attn.gamma, so that the initial attn matrix is the identity
-            #      attn.beta = attn.gamma = 1.0 is acceptable
-            self.beta_SA = 0.5
-            self.beta_FF = 1.0 
-            self.attn.custom_variable_initialization()
+    def initialize_parameters(self):
+        # The simplified transformer architecture has some requirements on 
+        # initialization values that are critical to the architecture.
+        #  (1) beta_FF < beta SA = 1.0
+        #
+        #  (2) The W_K part of attn.c_attn.weight = 0
+        #  (3) attn.alpha = 1.0
+        #  (4) attn.beta = attn.gamma, so that the initial attn matrix is the identity
+        #      attn.beta = attn.gamma = 1.0 is acceptable
+        self.attn.custom_variable_initialization()
+        with torch.no_grad():
+            self.beta_SA.fill_(1.0)
+            self.beta_FF.fill_(0.5)
 
     def forward(self, x):
         x = self.ln_1(x)
@@ -267,6 +274,7 @@ class GPT(nn.Module):
             wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
             h = nn.ModuleList([SimplifiedTransformerBlock(config) for _ in range(config.n_layer)]),
+            #h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
@@ -282,6 +290,8 @@ class GPT(nn.Module):
         for pn, p in self.named_parameters():
             if pn.endswith('c_proj.weight'):
                 torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * config.n_layer))
+        for h in self.transformer.h:
+            h.initialize_parameters()
 
         # report number of parameters
         print("number of parameters: %.2fM" % (self.get_num_params()/1e6,))
@@ -305,6 +315,8 @@ class GPT(nn.Module):
                 torch.nn.init.zeros_(module.bias)
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+        if isinstance(module, SimplifiedTransformerBlock ):
+            module.initialize_parameters()
 
     def forward(self, idx, targets=None):
         device = idx.device

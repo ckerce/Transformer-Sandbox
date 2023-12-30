@@ -12,43 +12,45 @@ Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. 
 
 One output from the `CausalSimplifiedTransformer` class on the `train_shakespeare_char` example is given below.  It does not currently work as well as the GPT-2 architecture already implemented in nanoGPT.  Since the Simplified Transformer has fewer parameters than a standar transformer, the embedding dimension was increased to get approximately the same number of parameters (10.61M) as the reference GPT-2 implementation (10.65M).  
 
-> GRETESTESTER:  
-> And, if if John Montague-commothzen:  
-> God know you will shall have you reportain:  
-> What, my lord, I will be so? Or, I'll do you know  
-> My provost, I have so?  
-> What, what shall you, good lord.  
->   
-> GLOUCESTER:  
-> My lord, I'll know your honour Gloucester?  
-> I mayou no lord: I do, I do cannot elewhen I.  
->   
-> GLOUCESTER:  
-> I can me, I pray you for I such be so?  
-> I know't you the I have I do know?  
-> I need, I have to done.  
->   
-> GLOUCESTER:  
-> I pray you on I please to know  
-> I go profeI I shake I do her so I phoI hav  
->    
-> ####################################################################################   
->    
-> Brother Clanues Edward's by joyfulty;  
-> For which werence country: and for heard;  
-> And for thesen our cannot from me home with man's land,  
-> And for thereof York. Warwick, how be grief,  
-> And, and, and you strown in the hands.  
->   
-> QUEEN ELIZABETH:  
-> The words hand you the far of your make,  
-> And your confe honour day for his minds,  
-> And you for and be no son, and you, And you many did,  
-> And your his gardmn crown some, and wear your did eas,  
-> And you fathed you mother, as you well.  
->   
-> ARTHARALEAR:  
-> Ay, you found you  
+```
+ GRETESTESTER:  
+ And, if if John Montague-commothzen:  
+ God know you will shall have you reportain:  
+ What, my lord, I will be so? Or, I'll do you know  
+ My provost, I have so?  
+ What, what shall you, good lord.  
+   
+ GLOUCESTER:  
+ My lord, I'll know your honour Gloucester?  
+ I mayou no lord: I do, I do cannot elewhen I.  
+   
+ GLOUCESTER:  
+ I can me, I pray you for I such be so?  
+ I know't you the I have I do know?  
+ I need, I have to done.  
+   
+ GLOUCESTER:  
+ I pray you on I please to know  
+ I go profeI I shake I do her so I phoI hav  
+    
+ ####################################################################################   
+    
+ Brother Clanues Edward's by joyfulty;  
+ For which werence country: and for heard;  
+ And for thesen our cannot from me home with man's land,  
+ And for thereof York. Warwick, how be grief,  
+ And, and, and you strown in the hands.  
+   
+ QUEEN ELIZABETH:  
+ The words hand you the far of your make,  
+ And your confe honour day for his minds,  
+ And you for and be no son, and you, And you many did,  
+ And your his gardmn crown some, and wear your did eas,  
+ And you fathed you mother, as you well.  
+   
+ ARTHARALEAR:  
+ Ay, you found you  
+```
 
 # nanoGPT
 

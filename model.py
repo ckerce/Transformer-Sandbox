@@ -95,7 +95,6 @@ class CausalShapedAttention(nn.Module):
         self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
         self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
 
-
     def forward(self, x):
         alpha = self.alpha
         beta = self.beta
@@ -104,7 +103,6 @@ class CausalShapedAttention(nn.Module):
         B, T, C = x.size()
 
         assert T <= self.max_block_size
-
 
         q, k  = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
@@ -118,7 +116,6 @@ class CausalShapedAttention(nn.Module):
         M  =  self.M[:,:,:T,:T].expand(B,self.n_head,T,T)
         att = beta * F.softmax(att, dim=-1)
         att = att + alpha * Id  - gamma * M
-
 
         att = self.attn_dropout(att)
         y = att @ v

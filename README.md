@@ -52,7 +52,7 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
  Ay, you found you  
 ```
 
-#SAS-P Algorithm
+# SAS-P Algorithm
 
 ![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
 

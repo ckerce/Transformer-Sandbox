@@ -88,20 +88,13 @@ class CausalShapedAttention(nn.Module):
             self.alpha.fill_(1.0)
             self.beta.fill_(1.0)
             self.gamma.fill_(1.0)        
+            # Initialize W_K to zero.
             self.c_attn.weight[self.n_embd:, :].fill_(0.0)
-
-        # Initialize W_K to zero.
-        #W_QK = self.c_attn.weight.detach()
-        #W_QK[self.n_embd:, :] = 0
-        #self.c_attn.weight = torch.nn.Parameter( W_QK )
-
 
         # Manually create buffers for attention components
         self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
         self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
 
-        #self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
-        #                                .view(1, 1, config.block_size, config.block_size))
 
     def forward(self, x):
         alpha = self.alpha
@@ -123,7 +116,6 @@ class CausalShapedAttention(nn.Module):
 
         Id = self.Id[:,:,:T,:T].expand(B,self.n_head,T,T)
         M  =  self.M[:,:,:T,:T].expand(B,self.n_head,T,T)
-        #pdb.set_trace() # BREAKPOINT
         att = beta * F.softmax(att, dim=-1)
         att = att + alpha * Id  - gamma * M
 

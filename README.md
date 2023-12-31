@@ -52,7 +52,7 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
  Ay, you found you  
 ```
 
-## Simplified Attention Sub-Block Algorithm
+## Simplified Attention Sub-Block Algorithm, Parallel (SAS-P)
 This is a more extensive description of the SAS-P block algorithms, parallelizing the Shaped Multi-Head Attention and standard Multi-Layered Perceptron components.
 ![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
 

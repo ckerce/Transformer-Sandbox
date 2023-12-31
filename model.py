@@ -63,7 +63,67 @@ class LayerNorm(nn.Module):
 #
 ###############################################################################
 
-class CausalShapedAttention(nn.Module):
+class _dep_CausalShapedAttention_withV(nn.Module):
+    '''
+    nano-GPT style code to implement causal shaped attention and apply it to an input.
+    '''
+    def __init__(self, config):
+        super().__init__()
+        assert config.n_embd % config.n_head == 0
+        # key & query projections for all heads, but in a batch
+        self.c_attn = nn.Linear(config.n_embd, 3 * config.n_embd, bias=config.bias)
+        # regularization
+        self.attn_dropout = nn.Dropout(config.dropout)
+        self.n_head = config.n_head
+        self.n_embd = config.n_embd
+        self.dropout = config.dropout
+        self.max_block_size = config.block_size
+        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor( 0.1, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
+        self.custom_variable_initialization()
+
+    def custom_variable_initialization(self):
+        with torch.no_grad():
+            self.alpha.fill_(1.0)
+            self.beta.fill_(0.1)
+            self.gamma.fill_(0.1)        
+            # Initialize W_K to zero.
+            self.c_attn.weight[self.n_embd:, :].fill_(0.0)
+
+        # Manually create buffers for attention components
+        self.register_buffer("MC", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+        self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+
+    def forward(self, x):
+        alpha = self.alpha
+        beta = self.beta
+        gamma = self.gamma
+
+        B, T, C = x.size()
+
+        assert T <= self.max_block_size
+
+        q, k,vv  = self.c_attn(x).split(self.n_embd, dim=2)
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        vv = vv.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+
+        att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
+        att = att.masked_fill(self.MC[:,:,:T,:T] == 0, float('-1e20')) # To machine precision = att + M, the argument of the softmax taken later.
+
+        Id = self.Id[:,:,:T,:T].expand(B,self.n_head,T,T)
+        MC  =  self.MC[:,:,:T,:T].expand(B,self.n_head,T,T)
+        att = beta * F.softmax(att, dim=-1)
+        att = att + alpha * Id  - gamma * MC
+
+        att = self.attn_dropout(att)
+        y = att @ vv
+        y = y.transpose(1, 2).contiguous().view(B, T, C)
+
+        return y
+
+class _dep_CausalShapedAttention(nn.Module):
     '''
     nano-GPT style code to implement causal shaped attention and apply it to an input.
     '''
@@ -78,21 +138,21 @@ class CausalShapedAttention(nn.Module):
         self.n_embd = config.n_embd
         self.dropout = config.dropout
         self.max_block_size = config.block_size
-        self.alpha = nn.Parameter(torch.tensor(0.5, dtype=torch.bfloat16))
-        self.beta = nn.Parameter(torch.tensor( 0.01, dtype=torch.bfloat16))
-        self.gamma = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
+        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor( 0.1, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
         with torch.no_grad():
-            self.alpha.fill_(0.5)
-            self.beta.fill_(0.01)
-            self.gamma.fill_(0.01)        
+            self.alpha.fill_(1.0)
+            self.beta.fill_(0.1)
+            self.gamma.fill_(0.1)        
             # Initialize W_K to zero.
             self.c_attn.weight[self.n_embd:, :].fill_(0.0)
 
         # Manually create buffers for attention components
-        self.register_buffer("M", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+        self.register_buffer("MC", F.softmax( 1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
         self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
 
     def forward(self, x):
@@ -110,12 +170,12 @@ class CausalShapedAttention(nn.Module):
         v = x.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
 
         att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
-        att = att.masked_fill(self.M[:,:,:T,:T] == 0, float('-1e20'))
+        att = att.masked_fill(self.MC[:,:,:T,:T] == 0, float('-1e20')) # To machine precision = att + M, the argument of the softmax taken later.
 
         Id = self.Id[:,:,:T,:T].expand(B,self.n_head,T,T)
-        M  =  self.M[:,:,:T,:T].expand(B,self.n_head,T,T)
+        MC  =  self.MC[:,:,:T,:T].expand(B,self.n_head,T,T)
         att = beta * F.softmax(att, dim=-1)
-        att = att + alpha * Id  - gamma * M
+        att = att + alpha * Id  - gamma * MC
 
         att = self.attn_dropout(att)
         y = att @ v
@@ -128,7 +188,7 @@ class MLP(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
-        self.gelu    = nn.GELU()
+        self.gelu    = nn.ReLU()
         self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
         self.dropout = nn.Dropout(config.dropout)
 
@@ -139,6 +199,66 @@ class MLP(nn.Module):
         x = self.dropout(x)
         return x
 
+class CausalShapedAttention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        assert config.n_embd % config.n_head == 0
+        if hasattr(config, 'use_v'):
+            self.use_v = config.use_v
+        else:
+            self.use_v = True 
+        self.num_var_to_pack = (3 if self.use_v else 2) 
+        self.c_attn = nn.Linear(config.n_embd, self.num_var_to_pack * config.n_embd, bias=config.bias)
+        self.attn_dropout = nn.Dropout(config.dropout)
+        self.n_head = config.n_head
+        self.n_embd = config.n_embd
+        self.dropout = config.dropout
+        self.max_block_size = config.block_size
+        self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
+        self.custom_variable_initialization()
+
+    def custom_variable_initialization(self):
+        with torch.no_grad():
+            self.alpha.fill_(1.0)
+            self.beta.fill_(0.1)
+            self.gamma.fill_(0.1)
+            self.c_attn.weight[self.n_embd:, :].fill_(0.0)
+
+        self.register_buffer("MC", F.softmax(1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+        self.register_buffer("Id", F.softmax(torch.eye(self.max_block_size), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))
+
+    def forward(self, x):
+        alpha = self.alpha
+        beta = self.beta
+        gamma = self.gamma
+
+        B, T, C = x.size()
+
+        assert T <= self.max_block_size
+
+        q, k, *v = self.c_attn(x).split(self.n_embd, dim=2)
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+        v = v[0] if self.use_v else x
+        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+
+        att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
+        att = att.masked_fill(self.MC[:, :, :T, :T] == 0, float('-1e20'))
+
+        Id = self.Id[:, :, :T, :T].expand(B, self.n_head, T, T)
+        MC = self.MC[:, :, :T, :T].expand(B, self.n_head, T, T)
+        att = beta * F.softmax(att, dim=-1)
+        att = att + alpha * Id - gamma * MC
+
+        att = self.attn_dropout(att)
+        y = att @ v
+        y = y.transpose(1, 2).contiguous().view(B, T, C)
+
+        return y
+
+
 class SimplifiedTransformerBlock(nn.Module):
 
     def __init__(self, config):
@@ -147,7 +267,7 @@ class SimplifiedTransformerBlock(nn.Module):
         self.attn = CausalShapedAttention(config)
         self.mlp = MLP(config)
         self.beta_SA = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
-        self.beta_FF = nn.Parameter(torch.tensor(0.25, dtype=torch.bfloat16))
+        self.beta_FF = nn.Parameter(torch.tensor(0.2, dtype=torch.bfloat16))
         self.initialize_parameters()
 
     def initialize_parameters(self):
@@ -162,7 +282,7 @@ class SimplifiedTransformerBlock(nn.Module):
         self.attn.custom_variable_initialization()
         with torch.no_grad():
             self.beta_SA.fill_(1.0)
-            self.beta_FF.fill_(0.25)
+            self.beta_FF.fill_(0.2)
 
     def forward(self, x):
         x = self.ln_1(x)
@@ -287,7 +407,8 @@ class GPT(nn.Module):
             if pn.endswith('c_proj.weight'):
                 torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * config.n_layer))
         for h in self.transformer.h:
-            h.initialize_parameters()
+            if isinstance(h, SimplifiedTransformerBlock ):
+               h.initialize_parameters()
 
         # report number of parameters
         print("number of parameters: %.2fM" % (self.get_num_params()/1e6,))

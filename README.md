@@ -54,7 +54,7 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
 
 ## Simplified Attention Sub-Block Algorithm
 This is a more extensive description of the SAS-P block algorithms, parallelizing the Shaped Multi-Head Attention and standard Multi-Layered Perceptron components.
-![SAS-P Algorithm](assets/SAS-P_AlgorithmSteps.png)
+![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
 
 
 # nanoGPT

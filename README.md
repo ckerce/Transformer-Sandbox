@@ -52,6 +52,11 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
  Ay, you found you  
 ```
 
+## Simplified Attention Sub-Block Algorithm, Parallel (SAS-P)
+This is a more extensive description of the SAS-P block algorithms, parallelizing the Shaped Multi-Head Attention and standard Multi-Layered Perceptron components.
+![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps_1.png)
+
+
 # nanoGPT
 
 nanoGPT (https://github.com/karpathy/nanoGPT) is a simple and fast repository for training/finetuning medium-sized GPTs. It is a rewrite of [minGPT](https://github.com/karpathy/minGPT) that prioritizes teeth over education. Still under active development, but currently the file `train.py` reproduces GPT-2 (124M) on OpenWebText, running on a single 8XA100 40GB node in about 4 days of training. The code itself is plain and readable: `train.py` is a ~300-line boilerplate training loop and `model.py` a ~300-line GPT model definition, which can optionally load the GPT-2 weights from OpenAI. That's it.

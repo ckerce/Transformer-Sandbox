@@ -12,6 +12,8 @@ Shaped Attention is developed and detailed by the ETH group, U. Toronto, and U. 
 
 One output from the `CausalSimplifiedTransformer` class on the `train_shakespeare_char` example is given below.  It does not currently work as well as the GPT-2 architecture already implemented in nanoGPT.  Since the Simplified Transformer has fewer parameters than a standar transformer, the embedding dimension was increased to get approximately the same number of parameters (10.61M) as the reference GPT-2 implementation (10.65M).  
 
+![TraningValidation](assets/SASPvsPreLN_wide)
+
 ```
  GRETESTESTER:  
  And, if if John Montague-commothzen:  

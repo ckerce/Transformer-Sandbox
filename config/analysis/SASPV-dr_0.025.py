@@ -1,7 +1,7 @@
 transformer_block_type = 'SASP'
 wandb_run_name = 'SASPV-dr_0.025'
 out_dir = 'analysis/SASPV-dr_0.025'
-wandb_project = 'SASP-analysis2'
+wandb_project = 'SASP-analysis3'
 dataset = 'shakespeare_char'
 eval_interval = 200
 eval_iters = 100

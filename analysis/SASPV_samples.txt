@@ -1,0 +1,240 @@
+In [2]: sample_model('analysis/out-shakespeare-char_01_SASPV')
+number of parameters: 10.07M
+Loading meta from data/shakespeare_char/meta.pkl...
+
+FoLEOMENENESVE3 BENUS:
+My NDost less notheary less lob, though'st loveachAbEy.
+Boabilitcholdherow away you combommitch'derohjoingmormorU:
+HAM:
+So sharippospling . W: hariI leackoa
+SCHHERMPHE.
+
+PHERMISHAMPHEREMEMEREHEMPHEHESS VIrgarlasaluetes?
+
+Master's PHEMPHEMHEMMEMEMHESS MEMEES MEEHMASMEMEHEMHEMS MAMHEMMHEMHAMMHHMEMMMMHMHHHQMHHHMEMMMMMHHMMMLMMMQMMMMWTMTWMMHMMVTzPHMHTzkMMHMMMMMMMMMMMMoMMPMMMMMMMMMMMMMMMMMMoMMThMMMMMMMMMMMMMMMMMmMMIMMdMMMMTMMMMMMMMMMMtMMMMMMMMMMMMMMMMMMMMMMMMTTMM
+,sMMMtMMPMMMMMM
+---------------
+
+MENENENIAMENENELEMENENENIAVEMENENENENE:
+ARCHAM:
+HAM:
+ISCbordithopppritcheritoriboditionouatclibisbene prive mitschmoraq qWASH3 abb.
+
+Ptri, a al .
+
+SCARGBELAHKE:
+
+CHAM-abP.
+
+
+CHAL.
+
+CHEM:
+
+CALE.
+
+CAMELUCENTIZACERE:
+
+
+CAMESBERCCHAM:
+
+CuCKEN ahoo.
+
+CHAMDEMAMEVENEVENEFENENVE;
+
+CCPkCCHMY:
+CCCAMECCCEMACCCEC3
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC3CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC3CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC;CC
+---------------
+
+LEOMENES:
+Howsomanoble agleney?
+SICINCENTAHENRY:
+BATHOMEMENCEFOPCQMEY:
+MALIEBEMWI3 mand &IEGBREH: boandaniYJECHAY:
+Posby driboandaing offorbatliting i'lidrearing .
+
+
+LAMPHE:
+
+S
+PHELSVEMERCEMS tain, a sain's triaps Saintin's so,
+
+
+CastenStawbe bisinsbebitinss staventialing Coucilintentianinbut swealband Chinnbitinbontinin CobisbinaBECKebating abbant's Chbinjtribitainbinmint's CantCHCLbhat's; Capbastab'd
+Comballanr'stlanbinnt bubbikbanmirbbannbatsanbitsabbat'Stkbbisbbbabbthbbbabbisbbbbbabbbtbbbbbb
+---------------
+
+BENVELEMERMENE:
+Thishow Losvowomberow shopp'sWIKENCE:
+So. So, so thitheritorous-withoppity modity loquitLEachi:ito isch RCuscommorotherow usay
+Lordy forUEHVECS
+
+SCSHUMHELEMVEPEE:
+
+HAMILLHISHELHAMHI:
+
+
+How shy gross'd-desbeack; his is't goost longrow Embest withHosAMHH:
+Howshipcly, by Howsating's touchaltshipbatractataccurshoes wehosposesomoHo'sHocHasbes'H HasbiwisbaTHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhHHHHHHHHHHHHHHHHHHHHHHHHHHHHHEHHHHHHHHHrHHHHHHH
+---------------
+
+In [3]: sample_model('analysis/out-shakespeare-char_02_SASPV')
+number of parameters: 10.07M
+Loading meta from data/shakespeare_char/meta.pkl...
+
+Foundame thought dead one But 3 YORKE:
+I how no bless'd! What would and mARD IV:
+For God! What prince, and could me hast against my friends of thy have
+You could behold jIN could and lord, as this arm a hand:
+From a happy and are and all, and approach
+Would and and all as and happy holp and mine and and Richard, and and Richard and and thy and and and and and and and are
+Wich's and and a appet in and friendom and and and and and and and and prepor'peRane:'
+Will' and and and good gore we and and
+---------------
+
+ANGELO:
+Ay, I'll $ELINCELIZA:
+And &CAMILLINA:
+Why, good Sall judgment, then
+Must way mouthink yourself have mother'd chequest and away;
+For Gloucester's daughter sorrows of my body's life?
+This I drown'd be an some that the thou dost dead:
+Hadst possess'd with the day's devil's sings,
+Of that deformy's son do drown deed possessess'd;
+For now's devouch'd delightners' day's deed,
+For anon' doster's dishoders' deedder's day's deed,
+when doom dishes deen'd the deaderkry deighter's deeds:
+deigher des
+---------------
+
+LIONGELOUCENTIO:
+Do 3 GRELANGENTIZA:
+My lord, XER:
+What was height it sir, and thou do begin so current,
+If and me children, and the country,
+But if it off a brother'd some confusion's sun:
+Show, being joys true children die antic and off;
+Yet, and be grandfather breathe befal crown,
+Bred by and and meddlous, and with it from men,
+But by a many mercy, by jot, being, and me.
+
+RICHCHENRY VI:
+Brief, I'll not be crown'd crown, thus must my friends:
+And Brarnet of blood be, thy brothers,
+By true, Bro
+---------------
+
+Buttercomes of 3 YORK:
+In God's be thee RatchWho 3 Stable! A RICA:
+'Zould my counsequercutiones, when Cannot doing is he
+Tut Conspitizen: there's thy sovereign'd queen,
+Sugging Rivers' country's graves I have a vows:
+Cannot Officer! by gone: little is the queen:
+Come, question, I will must a carity:
+Call's question at consul: and gives: I turns:
+Contraius breath: thus thing: kiss: thrust: I quiet:
+What's and you: true: I quives: farewell: the quen:h: truques: 'twe:
+Conques: thus: t: truquique: q
+---------------
+
+In [4]: sample_model('analysis/out-shakespeare-char_03_SASPV')
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[4], line 1
+----> 1 sample_model('analysis/out-shakespeare-char_03_SASPV')
+
+File /mnt/c/Users/ckerc/code/architectures/nanoGPT-SimplifiedTransformer/debug_sample.py:40, in sample_model(ModelDIR)
+     37 if init_from == 'resume':
+     38     # init from a model saved in a specific directory
+     39     ckpt_path = os.path.join(out_dir, 'ckpt.pt')
+---> 40     checkpoint = torch.load(ckpt_path, map_location=device)
+     41     gptconf = GPTConfig(**checkpoint['model_args'])
+     42     model = GPT(gptconf)
+
+File /mnt/c/Users/ckerc/code/architectures/env_nanoGPT/lib/python3.10/site-packages/torch/serialization.py:986, in load(f, map_location, pickle_module, weights_only, mmap, **pickle_load_args)
+    983 if 'encoding' not in pickle_load_args.keys():
+    984     pickle_load_args['encoding'] = 'utf-8'
+--> 986 with _open_file_like(f, 'rb') as opened_file:
+    987     if _is_zipfile(opened_file):
+    988         # The zipfile reader is going to advance the current file position.
+    989         # If we want to actually tail call to torch.jit.load, we need to
+    990         # reset back to the original position.
+    991         orig_position = opened_file.tell()
+
+File /mnt/c/Users/ckerc/code/architectures/env_nanoGPT/lib/python3.10/site-packages/torch/serialization.py:435, in _open_file_like(name_or_buffer, mode)
+    433 def _open_file_like(name_or_buffer, mode):
+    434     if _is_path(name_or_buffer):
+--> 435         return _open_file(name_or_buffer, mode)
+    436     else:
+    437         if 'w' in mode:
+
+File /mnt/c/Users/ckerc/code/architectures/env_nanoGPT/lib/python3.10/site-packages/torch/serialization.py:416, in _open_file.__init__(self, name, mode)
+    415 def __init__(self, name, mode):
+--> 416     super().__init__(open(name, mode))
+
+FileNotFoundError: [Errno 2] No such file or directory: 'analysis/out-shakespeare-char_03_SASPV/ckpt.pt'
+
+In [5]: mv analysis_dir/out-shakespeare-char_03_SASPV analysis/
+
+In [6]: sample_model('analysis/out-shakespeare-char_03_SASPV')
+number of parameters: 10.07M
+Loading meta from data/shakespeare_char/meta.pkl...
+
+CLIFFORD:
+Even I do resign, then you now! My lord, Hortengelongs,
+My liege, but one prizencely prince, I'll them England, God, or life,
+And whereof sight spider think we I hear him loss.
+
+GLOUCESTER:
+Now God, no, Margaret, sir, I renown gone?
+
+GLOUCESTER:
+This both, from this, when, my lord, when this leisure prince,
+Whose I, prince I lose my mind mind,
+I will God, which I would you blood his glory,
+If, which, how I promised my mind duty prince.
+In this banish, which I princely, good who would p
+---------------
+
+To-morrow, Gaunt, as Hold, God, lady; I will kill'd &CHARD:
+My Lord Angelo.
+What you shall, &CAPULET:
+A king? dost that queen! and what have all that queen?
+Kirram, Dorset? my gracious gentlemen; and what Richard, Xarquench,
+If queen much a quarrel? Did queen with a quiart:
+Dear quiet, quarrel quiquiquiqquaquiqueqqual qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq,:qqqqqqqqqqqq qqqqqqqnqqqqqqqqqqqqqqqqqqcqqqqqqqqqqqqqqqqqqqqqqqqqqq
+---------------
+
+In $ABETH:
+Good &CatesbY CAPULET:
+Am I will not peace, &Camillo.
+My lord, Quick! Why, &3 Help Henry &CAPULET:
+What chang did when I know't the king?
+And do her defend you'll go unto these for this earth!
+'Tis pipl in empty crown bark? or twill not?
+The kill'd the bride be ever me king?
+Will to low me but in banish when king!
+And you do know you keep and kill'd o' Terro?'
+Then, what I kill kill'd in me?
+To kill you kill king kind king kill'd?
+Talk cousil Till kill be kill' kill kin?
+Arak kill Kar
+---------------
+
+BRAKENBUSHY:
+'Tis then; Lest Hold, Jove Richard; being for York!
+
+ARCHBINGHAM:
+Poy Romeo! when I never you knowindows hear you now,
+To be undoth leave a man?
+And quoth one enemies a king's joy? if thou king!
+
+GLOUCESTER:
+Madam! it is then, and nor York Montague:
+My lord? where you be quiet of are woo your for you
+wert you have no grave me our kneel of you are king?
+To know you, if you are we king, if Montague?
+If you are enough an ender pluck and Mhore of here?
+My name, or any Ere of anyrange, i
+---------------

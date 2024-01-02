@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-import pdb
+#import pdb
 
 class LayerNorm(nn.Module):
     """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
@@ -87,7 +87,7 @@ class CausalShapedAttention(nn.Module):
         if hasattr(config, 'use_v'):            
             self.use_v = config.use_v
         else:
-            self.use_v = True 
+            self.use_v = False 
         self.num_var_to_pack = (3 if self.use_v else 2) 
         self.c_attn = nn.Linear(config.n_embd, self.num_var_to_pack * config.n_embd, bias=config.bias)
         self.attn_dropout = nn.Dropout(config.dropout)
@@ -257,6 +257,8 @@ class GPTConfig:
     n_embd: int = 768
     dropout: float = 0.0
     bias: bool = True # True: bias in Linears and LayerNorms, like GPT-2. False: a bit better and faster
+    transformer_block_type: str = 'SASP' # SASP, PreLN
+    use_v = True  # use V in SASP or not
 
 class GPT(nn.Module):
 
@@ -265,15 +267,33 @@ class GPT(nn.Module):
         assert config.vocab_size is not None
         assert config.block_size is not None
         self.config = config
+        if hasattr(config, 'transformer_block_type'):
+            self.transformer_block_type = config.transformer_block_type
+            if self.transformer_block_type == 'SASP':
+               self.transformer_block = SimplifiedTransformerBlock
+            elif self.transformer_block_type == 'PreLN':
+               self.transformer_block = Block
+        else:  # TODO:  Fix this dumb branching.  Wanted to complete test sweeps.
+            self.config.transformer_block_type = 'None'
+            self.transformer_block = [] 
 
+        print('#############################################################')
+        print('#############################################################')
+        print('')
+        print(self.transformer_block)
+        print('')
+        print('#############################################################')
+        print('#############################################################')
         self.transformer = nn.ModuleDict(dict(
             wte = nn.Embedding(config.vocab_size, config.n_embd),
             wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
-            h = nn.ModuleList([SimplifiedTransformerBlock(config) for _ in range(config.n_layer)]),
+            #h = nn.ModuleList([SimplifiedTransformerBlock(config) for _ in range(config.n_layer)]),
             #h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
+            h = nn.ModuleList([self.transformer_block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
+
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.

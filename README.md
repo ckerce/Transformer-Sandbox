@@ -55,8 +55,10 @@ One output from the `CausalSimplifiedTransformer` class on the `train_shakespear
 ```
 
 ### Samples from 9 different models 
-Models: PreLN / SASP / SASPV @ dropout = 2.5%, 10%, and 20% 
-Seed: Same seed.
+Models: PreLN / SASP / SASPV @ dropout = 2.5%, 10%, and 20%  
+All models trained from scratch using the initializations indicated in the following section.  
+Seed: Same seed.  
+Samples per model: 5
 ![Samples from 25M parameter models (PreLN, SASP, and SASPV](assets/Samples_25M_parameter_models_PreLN_SASP_SASPV.png)
 
 

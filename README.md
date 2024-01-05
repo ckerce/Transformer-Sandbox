@@ -61,6 +61,7 @@ Seed: Same seed.
 Samples per model: 5
 ![Samples from 25M parameter models (PreLN, SASP, and SASPV](assets/Samples_25M_parameter_models_PreLN_SASP_SASPV.png)
 
+![Training / Validation Curves](assets/Models_25M_Params_PreLN_SASP_SASPV.png)
 
 ## Simplified Attention Sub-Block Algorithm, Parallel (SAS-P)
 This is a more extensive description of the SAS-P block algorithms, parallelizing the Shaped Multi-Head Attention and standard Multi-Layered Perceptron components.

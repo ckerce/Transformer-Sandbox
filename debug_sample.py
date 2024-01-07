@@ -14,8 +14,8 @@ def sample_model(ModelDIR = 'out-shakespeare-char'):
    # -----------------------------------------------------------------------------
    init_from = 'resume' # either 'resume' (from an out_dir) or a gpt2 variant (e.g. 'gpt2-xl')
    out_dir = ModelDIR #'out-shakespeare-char' # ignored if init_from is not 'resume'
-   start = "\n" # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
-   start = "\nSIGNOR BENEDICK: Good morrow, sir! I seek redress today\nFor grievous wrongs that now I must convey.\nThis raven, bought with hope and high esteem,\nHath proved itself a foul and noisy dream.\n\nSIGNOR LEONATO: Ah, welcome, sir! Pray tell me of your woe,\nWhat grievance have you with this feathered foe?\nFor every pet we sell, we do assure,\nShall bring you joy and happiness demure.\n\nSIGNOR BENEDICK: Yet, sir, this raven has a wicked beak,\nAnd utters curses, croaks, and shrieks apeak\nThe foulest words I've heard from beast or man!"
+   start = "\nLORD" # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
+   #start = "\nSIGNOR BENEDICK: Good morrow, sir! I seek redress today\nFor grievous wrongs that now I must convey.\nThis raven, bought with hope and high esteem,\nHath proved itself a foul and noisy dream.\n\nSIGNOR LEONATO: Ah, welcome, sir! Pray tell me of your woe,\nWhat grievance have you with this feathered foe?\nFor every pet we sell, we do assure,\nShall bring you joy and happiness demure.\n\nSIGNOR BENEDICK: Yet, sir, this raven has a wicked beak,\nAnd utters curses, croaks, and shrieks apeak\nThe foulest words I've heard from beast or man!"
 
    num_samples = 4 # number of samples to draw
    max_new_tokens = 500 # number of tokens generated in each sample
@@ -78,6 +78,7 @@ def sample_model(ModelDIR = 'out-shakespeare-char'):
    print('---------------')
    print('\nContinuation Text Samples')
    # run generation
+   out_returns = [start]
    with torch.no_grad():
        with ctx:
            for k in range(num_samples):
@@ -85,6 +86,9 @@ def sample_model(ModelDIR = 'out-shakespeare-char'):
                out = decode(y[0].tolist())
                print(out[len(start):])
                print('---------------')
+               out_returns.append(out)
+
+   return out_returns
    
    
 def clip(x, width=5, decimal_places=2):
@@ -107,11 +111,4 @@ def print_model_params( model ):
    
 #print_model_params( model )
 
-
-if __name__ == "__main__":
-    # Parse the arguments
-    arg1 = str(sys.argv[1])
-
-    # Call the function with the parsed arguments
-    sample_model(arg1)
 

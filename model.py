@@ -16,6 +16,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 from model_SAS import *  # All basic blocks have been moved to model_SAS
+from model_TLSAS import *
 
 
 class LayerNorm(nn.Module):
@@ -121,7 +122,8 @@ class GPTConfig:
     dropout: float = 0.0
     bias: bool = True # True: bias in Linears and LayerNorms, like GPT-2. False: a bit better and faster
     transformer_block_type: str = 'SASP' # SASP, PreLN
-    use_v: bool = True  # use V in SASP or not
+    use_v: bool = False  # use V in SASP or not
+    use_proj: bool = False # use the output projection in SASP or not
 
 class GPT(nn.Module):
 
@@ -134,6 +136,8 @@ class GPT(nn.Module):
             self.transformer_block_type = config.transformer_block_type
             if self.transformer_block_type == 'SASP':
                self.transformer_block = SimplifiedTransformerBlock
+            elif self.transformer_block_type == 'TLSASP':
+               self.transformer_block = TLSimplifiedTransformerBlock
             elif self.transformer_block_type == 'PreLN':
                self.transformer_block = Block
         else:  # TODO:  Fix this dumb branching.  Wanted to complete test sweeps.
@@ -143,7 +147,7 @@ class GPT(nn.Module):
         print('#############################################################')
         print('#############################################################')
         print('')
-        print(self.transformer_block)
+        print(' Using: ', self.transformer_block)
         print('')
         print('#############################################################')
         print('#############################################################')
@@ -151,8 +155,6 @@ class GPT(nn.Module):
             wte = nn.Embedding(config.vocab_size, config.n_embd),
             wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
-            #h = nn.ModuleList([SimplifiedTransformerBlock(config) for _ in range(config.n_layer)]),
-            #h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             h = nn.ModuleList([self.transformer_block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))

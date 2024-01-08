@@ -74,24 +74,35 @@ class CausalShapedAttention(nn.Module):
     def __init__(self, config):
         super().__init__()
         assert config.n_embd % config.n_head == 0
+        # Provide the option to use or exclude the projection matrix
+        self.use_proj = getattr( config, 'use_proj', False)
         # Provide the option to use Q,K,V or just Q,K
-        if hasattr(config, 'use_v'):            
-            self.use_v = config.use_v
-        else:
-            self.use_v = False 
+        self.use_v    = getattr( config, 'use_v'   , False)
+
+        # Allocate output projection, if designated
+        if self.use_proj:
+            self.c_proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+
+        # Allocate QKV or just QK parameters in the attention
         self.num_var_to_pack = (3 if self.use_v else 2) 
         self.c_attn = nn.Linear(config.n_embd, self.num_var_to_pack * config.n_embd, bias=config.bias)
+
         self.attn_dropout = nn.Dropout(config.dropout)
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.dropout = config.dropout
+
+        # Maximum number of tokens to process.  Pre-alocate mask and attention component.
         self.max_block_size = config.block_size
+
+        # Parameters specific to the shaped attention
         self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
         self.beta = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
         self.gamma = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
+        # shaped attention has parameter initialization conditions
         with torch.no_grad():
             self.alpha.fill_(1.0)
             self.beta.fill_(0.01)
@@ -113,6 +124,8 @@ class CausalShapedAttention(nn.Module):
         q, k, *v = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
         q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
+
+        # Pass x directly if no V is used in the attention
         v = v[0] if self.use_v else x
         v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)
 
@@ -127,6 +140,10 @@ class CausalShapedAttention(nn.Module):
         att = self.attn_dropout(att)
         y = att @ v
         y = y.transpose(1, 2).contiguous().view(B, T, C)
+
+        # Apply output projection, if enabled
+        if self.use_proj:
+            y = self.c_proj(y)
 
         return y
 

@@ -1,5 +1,5 @@
 
-# Simplified Transformer Blocks
+## Simplified Transformer Blocks
 
 This fork of nanoGPT adds an implementation of the transformer architecture described in the  [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906) paper.  The main additons are the `SimplifiedTransformerBlock` and `CausalShapedAttention` classes to the `model.py` file, with some modifications to the supporting code to run the implementation.  `SimplifiedTransformerBlock` is used as a drop in replacement for the `Block` class in `model.py`. 
 
@@ -71,6 +71,16 @@ Samples per model: 5
 This is a more extensive description of the SAS-P block algorithms, parallelizing the Shaped Multi-Head Attention and standard Multi-Layered Perceptron components.
 ![SAS-P Algorithm](assets/SAS-P_Algorithm_Steps.png)
 
+
+```
+
+
+
+
+
+
+
+```
 
 # nanoGPT
 

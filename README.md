@@ -2,6 +2,11 @@
 
 I forked Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) to create an easy-to-use playground for experimenting with transformer architectures.  nanoGPT is a simple and fast repository for training/finetuning medium-sized GPTs.  The local instructions for settup for this repo are found [here](nanoGPT-README.md). 
 
+* Signal Propgation Analysis
+* [Flexible Transfomer Architecture](docs/simplified-transformers_README.md)
+* Flexible Transformer w/ ALiBi
+* Diffusion Language Model 
+
 ## Simplified Transformer Blocks
 
 This fork of nanoGPT adds an implementation of the transformer architecture described in the  [Simplifying Transformer Blocks](https://arxiv.org/abs/2311.01906) paper.  The main additons are the `SimplifiedTransformerBlock` and `CausalShapedAttention` classes to the `model.py` file, with some modifications to the supporting code to run the implementation.  `SimplifiedTransformerBlock` is used as a drop in replacement for the `Block` class in `model.py`. 

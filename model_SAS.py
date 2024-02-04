@@ -1,7 +1,7 @@
 
 import math
 #import inspect
-#from dataclasses import dataclass
+from dataclasses import dataclass
 
 import torch
 import torch.nn as nn
@@ -24,14 +24,27 @@ class SASMLP(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
+
+        self.llama_mlp = getattr( config, 'llama_mlp', False)
+        if self.llama_mlp:
+           N = int( 2.1/3. * 4 * config.n_embd )
+           self.c_mask  = nn.Linear(config.n_embd, N, bias=config.bias) # LLama2
+        else:
+           N = int( 4 * config.n_embd )
+
+        self.c_fc    = nn.Linear(config.n_embd, N, bias=config.bias)
         self.actv    = nn.GELU()
-        self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
+        self.c_proj  = nn.Linear( N, config.n_embd, bias=config.bias)
         self.dropout = nn.Dropout(config.dropout)
+        
 
     def forward(self, x):
+        if self.llama_mlp:
+           xtmp = self.c_mask(x)  # TODO:  testing. Remove this -- it'sLLama Like, not shaped-attention like
         x = self.c_fc(x)
         x = self.actv(x)
+        if self.llama_mlp:
+           x = x * xtmp           # TODO:  testing. Remove this -- it'sLLama Like, not shaped-attention like
         x = self.c_proj(x)
         x = self.dropout(x)
         return x
@@ -63,16 +76,16 @@ class CausalShapedAttention(nn.Module):
 
         # Parameters specific to the shaped attention
         self.alpha = nn.Parameter(torch.tensor(1.0, dtype=torch.bfloat16))
-        self.beta = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
-        self.gamma = nn.Parameter(torch.tensor(0.01, dtype=torch.bfloat16))
+        self.beta = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
+        self.gamma = nn.Parameter(torch.tensor(0.1, dtype=torch.bfloat16))
         self.custom_variable_initialization()
 
     def custom_variable_initialization(self):
         # shaped attention has parameter initialization conditions
         with torch.no_grad():
             self.alpha.fill_(1.0)
-            self.beta.fill_(0.01)
-            self.gamma.fill_(0.01)
+            self.beta.fill_(0.1)
+            self.gamma.fill_(0.1)
             self.c_attn.weight[self.n_embd:, :].fill_(0.0)
 
         self.register_buffer("MC", F.softmax(1e20 * torch.tril(torch.ones(self.max_block_size, self.max_block_size)), dim=-1, dtype=torch.bfloat16).view(1, 1, self.max_block_size, self.max_block_size))

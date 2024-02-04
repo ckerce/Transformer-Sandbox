@@ -16,7 +16,6 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 from model_SAS import *  # All basic blocks have been moved to model_SAS
-from model_TLSAS import *
 
 
 class LayerNorm(nn.Module):

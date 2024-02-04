@@ -6,8 +6,8 @@ There are a number of reasons to think that this should be very challenging:
 2. Beyond parallelization, SASP attempts to remove unnecessary weight information.  In the first experiment, where both standard and SASP are trained from scratch, the capacity of SASP seems to have been verified -- but at the expense of very slow convergence.
 
 Relevant files:
-- [../experiments/SASP\_llama2\_conversion.py](../experiments/SASP_llama2_conversion.py)
-- [../model\_SAS.py](../model_SAS.py)
+- [SASP\_llama2\_conversion.py](../experiments/SASP_llama2_conversion.py)
+- [model\_SAS.py](../model_SAS.py)
 
 ## Notes
 

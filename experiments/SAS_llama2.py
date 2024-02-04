@@ -32,7 +32,7 @@ class LLamaBlockConfig:
           "norm_eps"     : 1e-05, 
           "vocab_size"   : -1}
     '''
-    block_size: int = 3192 
+    block_size: int = 4096 
     vocab_size: int = 32000 # GPT-2 vocab_size of 50257, padded up to nearest multiple of 64 for efficiency
     n_layer: int = 32 
     n_head: int = 32 
@@ -53,12 +53,13 @@ batch_size = 1
 n_embd = config.n_embd
 block_size = config.block_size
 
-optimizer = optim.RMSprop(new_block.parameters(), lr=0.00025)
+optimizer = optim.RMSprop(new_block.parameters(), lr=0.0001)
 criterion = nn.MSELoss()
 
 for train_step in range(N_train):
     # Generate training data using llama_layer
-    x = torch.randn(batch_size, block_size, n_embd, requires_grad=True).to(device)
+    x = torch.rand(batch_size, block_size, n_embd, requires_grad=True).to(device)
+
     # since both models perform normalization as the first step of 
     # each block, we need to compare normalized outputs
     x = F.normalize(x, dim=2)
@@ -80,4 +81,22 @@ for train_step in range(N_train):
 
     # Print the loss for monitoring training progress
     print(f"Training Step: {train_step + 1}, Loss: {loss.item()}")
+
+
+def comparison_at_size( block_size ):
+    '''
+       When training with randn generated probing data, this degrades with
+       block sizes that differ from the training block size.
+    '''
+    n_embd = 4096
+    #x = torch.randn(batch_size, block_size, n_embd, requires_grad=True).to(device); 
+    x = torch.rand(batch_size, block_size, n_embd, requires_grad=True).to(device); 
+    x = F.normalize(x, dim=2)
+    y = llama_layer( x )[0].to(device); 
+    y = F.normalize(y,dim=2)
+    out = new_block(x); 
+    out = F.normalize(out, dim=2)
+    print('Loss: ', torch.mean(torch.mean(torch.sum(y*out, dim=2), dim=1)))
+
+
 

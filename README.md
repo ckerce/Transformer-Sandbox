@@ -2,7 +2,7 @@
 
 I forked Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) to create an easy-to-use analysis environment for experimenting with transformer architectures.  
 
-In contrast to nanoGPT, where the focus is on effiecient management of training a GPT-2 sized model, this sandbox is focused on the investigation of alternative sequence-to-sequence architectures (using the GPT-2 scale training environment made available by nanoGPT).
+[In contrast to the goals of nanoGPT](https://github.com/karpathy/nanoGPT), where the focus is on effiecient management of training a GPT-2 sized model, this sandbox is focused on the investigation of alternative sequence-to-sequence architectures (using the GPT-2 scale training environment made available by nanoGPT).
 
 The local setup instructions for this repo are found [here](docs/nanoGPT-README.md). 
 

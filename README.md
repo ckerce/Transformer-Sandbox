@@ -9,7 +9,7 @@ The local setup instructions for this repo are found [here](docs/nanoGPT-README.
 I'm preparing baseline material to serve as jumping off points for LLM and Generative AI investigation.  Current topics of interest are the following:
 * [Flexible Transfomer Architecture](docs/simplified-transformers_README.md):  Investigation of observations and assertions from the paper Simplified Transformer Blocks ([on arxiv](https://arxiv.org/abs/2311.01906)).
 * Signal Propgation Analysis: `IN PROGRESS` using Llama2 
-* [Parallel Simplified Transformer Implementation of Llama2](docs/parallel-simplified-transformer-llama2.md) : `IN PROGRESS` 
+* [(Attempt to) Implement Llama2 in Parallel Simplified Transformer Architecture](docs/parallel-simplified-transformer-llama2.md) : `IN PROGRESS` 
 * Simplified Transformer w/ ALiBi: `TODO` 
 * Mixture of Experts - Simplified Transformer: `TODO`
 * Diffusion Language Models: `TODO`

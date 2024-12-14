@@ -12,6 +12,5 @@ I'm preparing baseline material to serve as jumping off points for LLM and Gener
 * [(Attempt to) Implement Llama2 in Parallel Simplified Transformer Architecture](docs/parallel-simplified-transformer-llama2.md) : `IN PROGRESS` 
 * Simplified Transformer w/ ALiBi: `TODO` 
 * Mixture of Experts - Simplified Transformer: `TODO`
-* Diffusion Language Models: `TODO`
 * HiPPO and State Space Models: `TODO`
 
